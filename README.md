@@ -3,4 +3,5 @@ bitwig-icc
 
 Inter-controller communication framework for Bitwig Studio.
 
-Ported from my code written to facilitate the AbletonPlus module.
+Originally ported from my code written to facilitate the AbletonPlus module, much of it is now re-written to be more dynamic and easier to use.
+
