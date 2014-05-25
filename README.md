@@ -6,7 +6,7 @@ Inter-controller communication framework for Bitwig Studio.
 Originally ported from my code written to facilitate the AbletonPlus module, much of it is now re-written to be more dynamic and easier to use.
 
 Use the following to  demonstrate the callbackability:
-
+```javascript
 var a = new ICC.ICC_Controller('root_contoller');
 a.create_value('w', 10);
 a.create_value('x', 20);
@@ -54,3 +54,4 @@ for(i in arr){
     arr[i].set(arr[i].get() + 1)
     console.log(arr[i].get());   
 }
+```
