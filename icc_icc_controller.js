@@ -91,9 +91,7 @@ ICC.ICC_Controller.prototype.create_value = function(identifier, init_value){
 	this._values[identifier] = new ICC.ICC_Value(identifier, init_value, this);
     }else{
 	throw "Value Exists";
-    }
-
-    
+    } 
 
     if(typeof this._events[identifier] === 'undefined'){
 	this._events[identifier] = [];
@@ -144,6 +142,13 @@ ICC.ICC_Controller.prototype.add_callback = function(parameter){
     }
 }
 
+/**\fn 
+ * 
+ *
+ * @param None
+ */
+
+
 
 /**\fn ICC_Controller.get_value_objects
  * 
@@ -193,7 +198,7 @@ ICC.ICC_Controller.prototype.fire_event = function(identifier){
     }else{
 	for(var i in this._events[identifier]){
 	    if ( typeof this._events[identifier][i] === 'function' ){
-		this._events[identifier][i]();
+		this._events[identifier][i].call(this._events[identifier][i]);
 	    }
 	}
     }
