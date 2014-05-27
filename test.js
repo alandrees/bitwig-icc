@@ -8,83 +8,84 @@
  *
  */
 
-function test_contoller(icc_values){
+function testobj(id, icc_values){
+    this.identifier = id;
+ 
     for(var i in icc_values){
-       if(typeof this[i] === 'undefined'){
+       
+	if(typeof this[i] === 'undefined'){
           this[i] = icc_values[i];
        }
     }
 }
 
-test_controller.prototype.w_cb = function(value) {
-       console.log('w callback');
-    
-       console.log(this);
-    
-       console.log(w_cb.value_object.get());
-}   
+testobj.prototype.st_cb = function(value) {
+     console.log('select_track callback fired (' + this.identifier + ')!'); 
+}
 
-test_controller.prototype.x_cb = function(value) {
-       console.log('x callback');
-    
-       console.log(this.zf1());
-    
-       console.log(x_cb.value_object.get());
+testobj.prototype.x_cb = function(value) {
+    console.log('x callback fired (' + this.identifier + ')!');
 };
 
-test_controller.prototype.y_cb = function(value) {
-       console.log('y callback');
-    
-       console.log(this.zf1());
-    
-       console.log(y_cb.value_object.get());
+testobj.prototype.y_cb = function(value) {
+    console.log('y callback fired (' + this.identifier + ')!');
 };
 
-test_controller.prototype.z_cb = function(value) {
-       console.log('z callback');
-    
-       console.log(this);
-    
-       console.log(z_cb.value_object.get());
-}   
+testobj.prototype.e_cb = function(value) {
+    console.log('extra callback fired (' + this.identifier + ')!');
+}
 
 var a = new ICC.ICC_Controller('root_contoller');
+
 a.create_value('x_offset', 9);
 a.create_value('y_offset', 6);
 a.create_value('select_track', 3);
 a.create_value('extra', 'this is just some data');
 
-var n = new test_controller(a.get_value_objects(['w','x','y','z']));
+var n = new testobj('n', a.get_value_objects(['x_offset','y_offset','select_track','extra']));
+var m = new testobj('m', a.get_value_objects(['x_offset','y_offset','select_track','extra']));
 
-a.add_callback([{
-                   identifier: 'w',
-                   callback: n.w_cb
-                   },
-                   {
-                   identifier: 'x',
-                   callback: n.x_cb                      
-                   },
-                   {
-                   identifier: 'y',
-                   callback: n.y_cb                      
-                   },
-                   {
-                   identifier: 'z',
-                   callback: n.z_cb                      
-                   }                
-]);
+a.add_callback([{   identifier        : 'select_track',
+                    callback          : n.st_cb,
+		    execution_context : n
+                },
+                {
+                    identifier        : 'x_offset',
+                    callback          : n.x_cb,
+		    execution_context : n
+                },
+                {
+                    identifier        : 'y_offset',
+                    callback          : n.y_cb,     
+		    execution_context : n                 
+                },
+                {
+                    identifier        : 'extra',
+                    callback          : n.e_cb,     
+		    execution_context : n                 
+                },
+		{   identifier        : 'select_track',
+                    callback          : m.st_cb,
+		    execution_context : m
+                },
+                {
+                    identifier        : 'x_offset',
+                    callback          : m.x_cb,     
+		    execution_context : m                 
+                },
+                {
+                    identifier        : 'y_offset',
+                    callback          : m.y_cb,     
+		    execution_context : m                 
+                },
+                {
+                    identifier        : 'extra',
+                    callback          : m.e_cb,     
+		    execution_context : m                 
+                }
+               ]);
 
-
-
-var arr = a.get_value_objects(['w','x','y','z']);
-
-w_cb.value_object = arr.w;
-n.value_object = arr.x;
-n.value_object = arr.y;
-z_cb.value_object = arr.z;
-
-for(i in arr){
-    console.log("update " + arr[i]._identifier + ":");
-    arr[i].set(arr[i].get() + 1)
-    
-}
+n.select_track.set(10);
+m.x_offset.set(m.x_offset + 1);
+n.y_offset.set(m.y_offset + 1);
+m.extra.set("newvalue");
