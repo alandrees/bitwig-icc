@@ -2,7 +2,7 @@
  * Copyright 2014 Alan Drees
  *   
  * Purpose:
- *   Inter-controller communication code rewritten for Bitwig Studio
+ *   Inter-controller communication controller
  *   Original: https://github.com/alandrees/RemoteScripts/ 
  *
  * Includes:
@@ -111,53 +111,82 @@ ICC.ICC_Controller.prototype.create_value = function(identifier, init_value){
 
 ICC.ICC_Controller.prototype.remove_value = function(identifier){
     if (typeof this_values[identifier] !== 'undefined'){
-	delete this._values[identifier]
+	     delete this._values[identifier]
     }   
 }
 
-/**\fn ICC_Controller.add_callback
+/**\fn ICC_Controller.append_callback
  * 
- * Adds a callback to the callback list for a given ID.  Callback function objects require an "execution_context" property to be executed
+ * Adds a callback to the callback list for a given ID, putting at the end of the list.  Callback function objects require an "execution_context" property to be executed
  * 
  * @param parameter_list array of objects which have the event identifier and callback
  *
  * @returns None
  */
 
-ICC.ICC_Controller.prototype.add_callback = function(parameter){
+ICC.ICC_Controller.prototype.append_callback = function(parameter){
 
     for(var i in parameter){
-	if (typeof parameter[i].callback === 'function'){
-	       
-	    if (typeof this._events[parameter[i].identifier] === 'undefined')
-	    {
+	     if (typeof parameter[i].callback === 'function'){
+	         
+	         if (typeof this._events[parameter[i].identifier] === 'undefined')
+	         {
 
-		this._events[parameter[i].identifier] = [];
-	    }
+		          this._events[parameter[i].identifier] = [];
+	         }
 
-	    var callback_object = {};
+	         var callback_object = {};
 
-	    callback_object.callback = parameter[i].callback;
+	         callback_object.callback = parameter[i].callback;
 
-	    if(typeof parameter[i].execution_context !== 'undefined'){
-		callback_object.execution_context = parameter[i].execution_context;
-	    }
-	    else
-	    {
-		callback_object.execution_context = parameter[i].callback;
-	    }
-	    
-	    this._events[parameter[i].identifier][this._events[parameter[i].identifier].length] = callback_object;
-	}
+	         if(typeof parameter[i].execution_context !== 'undefined'){
+		          callback_object.execution_context = parameter[i].execution_context;
+	         }
+	         else
+	         {
+		          callback_object.execution_context = parameter[i].callback;
+	         }
+	         
+	         this._events[parameter[i].identifier].push(callback_object);
+	     }
     }
 }
 
-/**\fn 
+/**\fn ICC_Controller.prepend_callback
  * 
+ * Adds a callback to the callback list for a given ID, adding it to the beginning of the execution chain.  Callback function objects require an "execution_context" property to be executed
+ * 
+ * @param parameter_list array of objects which have the event identifier and callback
  *
- * @param None
+ * @returns None
  */
 
+ICC.ICC_Controller.prototype.prepend_callback = function(parameter){
+    for(var i in parameter){
+	     if (typeof parameter[i].callback === 'function'){
+	         
+	         if (typeof this._events[parameter[i].identifier] === 'undefined')
+	         {
+
+		          this._events[parameter[i].identifier] = [];
+	         }
+
+	         var callback_object = {};
+
+	         callback_object.callback = parameter[i].callback;
+
+	         if(typeof parameter[i].execution_context !== 'undefined'){
+		          callback_object.execution_context = parameter[i].execution_context;
+	         }
+	         else
+	         {
+		          callback_object.execution_context = parameter[i].callback;
+	         }
+	         
+	         this._events[parameter[i].identifier].unshift(callback_object);
+	     }
+    }
+}
 
 
 /**\fn ICC_Controller.get_value_objects
