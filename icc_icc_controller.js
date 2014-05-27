@@ -48,8 +48,6 @@ After adding a controller:
 1: Controller calls ICC_Controller.remove_controller(this)
 2: 
 
-
-
 Moving onward:
 
 1. Values are created and destroyed by the ICC controller
@@ -119,7 +117,7 @@ ICC.ICC_Controller.prototype.remove_value = function(identifier){
 
 /**\fn ICC_Controller.add_callback
  * 
- * Adds a callback to the callback list for a given ID
+ * Adds a callback to the callback list for a given ID.  Callback function objects require an "execution_context" property to be executed
  * 
  * @param parameter_list array of objects which have the event identifier and callback
  *
@@ -136,8 +134,20 @@ ICC.ICC_Controller.prototype.add_callback = function(parameter){
 
 		this._events[parameter[i].identifier] = [];
 	    }
+
+	    var callback_object = {};
+
+	    callback_object.callback = parameter[i].callback;
+
+	    if(typeof parameter[i].execution_context !== 'undefined'){
+		callback_object.execution_context = parameter[i].execution_context;
+	    }
+	    else
+	    {
+		callback_object.execution_context = parameter[i].callback;
+	    }
 	    
-	    this._events[parameter[i].identifier][this._events[parameter[i].identifier].length] = parameter[i].callback;
+	    this._events[parameter[i].identifier][this._events[parameter[i].identifier].length] = callback_object;
 	}
     }
 }
@@ -197,8 +207,8 @@ ICC.ICC_Controller.prototype.fire_event = function(identifier){
 	return false;
     }else{
 	for(var i in this._events[identifier]){
-	    if ( typeof this._events[identifier][i] === 'function' ){
-		this._events[identifier][i].call(this._events[identifier][i]);
+	    if ( typeof this._events[identifier][i].callback === 'function' && typeof this._events[identifier][i].execution_context !== 'undefined'){
+		this._events[identifier][i].callback.call(this._events[identifier][i].execution_context);
 	    }
 	}
     }
