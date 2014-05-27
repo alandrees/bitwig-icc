@@ -35,55 +35,46 @@ testobj.prototype.e_cb = function(value) {
     console.log('extra callback fired (' + this.identifier + ')!');
 }
 
-var a = new ICC.ICC_Controller('root_contoller');
+var rc = ICC.create_new_icc_network('root_contoller');
 
-a.create_value('x_offset', 9);
-a.create_value('y_offset', 6);
-a.create_value('select_track', 3);
-a.create_value('extra', 'this is just some data');
+rc.create_value('x_offset', 9);
+rc.create_value('y_offset', 6);
+rc.create_value('select_track', 3);
+rc.create_value('extra', 'this is just some data');
 
-var n = new testobj('n', a.get_value_objects(['x_offset','y_offset','select_track','extra']));
-var m = new testobj('m', a.get_value_objects(['x_offset','y_offset','select_track','extra']));
+var n = new testobj('n', rc.get_value_objects(['x_offset','y_offset','select_track','extra']));
+var m = new testobj('m', rc.get_value_objects(['x_offset','y_offset','select_track','extra']));
+var o = new testobj('o', rc.get_value_objects(['extra']));
 
-a.add_callback([{   identifier        : 'select_track',
-                    callback          : n.st_cb,
-		    execution_context : n
-                },
-                {
-                    identifier        : 'x_offset',
-                    callback          : n.x_cb,
-		    execution_context : n
-                },
-                {
-                    identifier        : 'y_offset',
-                    callback          : n.y_cb,     
-		    execution_context : n                 
-                },
-                {
-                    identifier        : 'extra',
-                    callback          : n.e_cb,     
-		    execution_context : n                 
-                },
-		{   identifier        : 'select_track',
-                    callback          : m.st_cb,
-		    execution_context : m
-                },
-                {
-                    identifier        : 'x_offset',
-                    callback          : m.x_cb,     
-		    execution_context : m                 
-                },
-                {
-                    identifier        : 'y_offset',
-                    callback          : m.y_cb,     
-		    execution_context : m                 
-                },
-                {
-                    identifier        : 'extra',
-                    callback          : m.e_cb,     
-		    execution_context : m                 
-                }
-               ]);
+rc.append_callback([{   identifier        : 'select_track',
+                        callback          : n.st_cb,
+		                  execution_context : n
+                    },
+                    {
+                        identifier        : 'x_offset',
+                        callback          : m.x_cb,
+		                  execution_context : m
+                    },
+                    {
+                        identifier        : 'y_offset',
+                        callback          : m.y_cb,     
+		                  execution_context : m                 
+                    },
+                    {
+                        identifier        : 'extra',
+                        callback          : o.e_cb,     
+		                  execution_context : o                 
+                    }]);
+
+rc.prepend_callback([{   identifier        : 'x_offset',
+                         callback          : o.x_cb,     
+		                   execution_context : o                 
+                     },
+                     {
+                         identifier        : 'y_offset',
+                         callback          : o.y_cb,     
+		                   execution_context : o                 
+                     }]);
 
 n.select_track.set(10);
 m.x_offset.set(m.x_offset + 1);
