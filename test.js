@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Alan Drees
+ * Copyright 2014-2015 Alan Drees
  *   
  * Purpose:
  *   Test code to ensure that the ICC controller behaves as expected
